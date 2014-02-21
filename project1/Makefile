@@ -31,5 +31,5 @@ pretty: Compiler.c InstrUtils.c InstrUtils.h Utils.c Utils.h
 	indent -linux Optimizer.c
 
 clean:
-	rm -rf compile optimize run tinyL.out
+	rm -rf compile optimize run tinyL.out *.dSYM
 
