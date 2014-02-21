@@ -15,18 +15,18 @@
 
 int main()
 {
-	Instruction *head;
+  Instruction *head;
 
-	head = ReadInstructionList(stdin);
-	if (!head) {
-		WARNING("No instructions\n");
-		exit(EXIT_FAILURE);
-	}
-	/* YOUR CODE GOES HERE */
-	if (head) {
-		PrintInstructionList(stdout, head);
-		DestroyInstructionList(head);
-	}
-	return EXIT_SUCCESS;
+  head = ReadInstructionList(stdin);
+  if (!head) {
+    WARNING("No instructions\n");
+    exit(EXIT_FAILURE);
+  }
+  /* YOUR CODE GOES HERE */
+  if (head) {
+    PrintInstructionList(stdout, head);
+    DestroyInstructionList(head);
+  }
+  return EXIT_SUCCESS;
 }
 
