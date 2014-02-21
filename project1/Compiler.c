@@ -100,7 +100,6 @@ static int digit()
 static int variable()  /* only called for R-values */
 {
   int reg;
-  /* YOUR CODE GOES HERE */
 
   if (!is_identifier(token)) {
     ERROR("Variable %c unknown\n", token);
@@ -117,7 +116,6 @@ static int expr()
   int reg, left_reg, right_reg;
 
   switch (token) {
-  /* YOUR CODE GOES HERE */
   case '+':
     next_token();
     left_reg = expr();
@@ -185,7 +183,6 @@ static void assign()
 
 static void read()
 {
-  /* YOUR CODE GOES HERE */
   if (token != '?') {
     ERROR("Expected read statement\n");
     exit(EXIT_FAILURE);
@@ -216,7 +213,6 @@ static void print()  /* variables are handled explicitly without recursive call 
 
 static void stmt()
 {
-  /* YOUR CODE GOES HERE */
   switch (token) {
   case 'a':
   case 'b':
@@ -239,7 +235,6 @@ static void stmt()
 
 static void morestmts()
 {
-  /* YOUR CODE GOES HERE */
   switch (token) {
   case ';':
     next_token();
@@ -249,34 +244,19 @@ static void morestmts()
     return;
     break;
   default:
-    ERROR("Invalid more statements\n");
+    ERROR("Expected ';'\n");
     exit(EXIT_FAILURE);
   }
 }
 
 static void stmtlist()
 {
-  /* YOUR CODE GOES HERE */
-  switch (token) {
-  case 'a':
-  case 'b':
-  case 'c':
-  case 'd':
-  case 'e':
-  case '?':
-  case '!':
-    stmt();
-    morestmts();
-    break;
-  default:
-    ERROR("Invalid statement list\n");
-    exit(EXIT_FAILURE);
-  }
+  stmt();
+  morestmts();
 }
 
 static void program()
 {
-  /* YOUR CODE GOES HERE */
   stmtlist();
 
   if (token != '.') {
