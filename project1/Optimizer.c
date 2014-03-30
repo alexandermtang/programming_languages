@@ -10,36 +10,26 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "InstrUtils.h"
 #include "Utils.h"
-#include "sorted-list.h"
 
 void deleteInstruction(Instruction *curr_instr)
 {
   Instruction *prev_instr = curr_instr->prev;
   Instruction *next_instr = curr_instr->next;
 
-  prev_instr->next = next_instr;
-  next_instr->prev = prev_instr;
+  if (prev_instr) {
+    prev_instr->next = next_instr;
+  }
+
+  if (next_instr) {
+    next_instr->prev = prev_instr;
+  }
 
   free(curr_instr);
 }
 
-int compare_ints(void *p1, void *p2)
-{
-  int i1 = *(int *)p1;
-  int i2 = *(int *)p2;
-
-  return i1 - i2;
-}
-
-void destroy_int(void *p)
-{
-  int *i = (int *)p;
-  free(i);
-
-  return;
-}
 
 int main()
 {
@@ -54,7 +44,8 @@ int main()
   // start from last instruction
   Instruction *curr_instr = LastInstruction(head);
 
-  SortedList *crit_reg_and_vars = SLCreate(compare_ints, destroy_int);
+  char crit_reg_and_vars[102];  // r0, r1, ..., r31, ..., 'a', 'b', 'c', 'd', 'e'
+  memset(crit_reg_and_vars, 'f', 102);
 
   while (curr_instr) {
     curr_instr->critical = 'f';  // guilty until proven innocent
@@ -67,33 +58,27 @@ int main()
     } else if (curr_instr->opcode == WRITE) {
       curr_instr->critical = 't';
 
-      int *field1 = malloc(sizeof(int));
-      memcpy(field1, &curr_instr->field1, sizeof(int));
-      SLInsert(crit_reg_and_vars, field1);
+      crit_reg_and_vars[curr_instr->field1] = 't';
 
-    // if field1 is in crit_reg_and_vars, then mark instruction as critical
-    } else if (SLFind(crit_reg_and_vars, &curr_instr->field1)) {
+    // if field1 is in crit_reg_and_vars, then mark instruction as critical,
+    // and add field2, field3 into crit_reg_and_vars
+    } else if (crit_reg_and_vars[curr_instr->field1] == 't') {
       curr_instr->critical = 't';
-      SLRemove(crit_reg_and_vars, &curr_instr->field1);
+
+      crit_reg_and_vars[curr_instr->field1] = 'f';
 
       // add field2 if not immediate value
       if (curr_instr->opcode != LOADI) {
-        int *field2 = malloc(sizeof(int));
-        memcpy(field2, &curr_instr->field2, sizeof(int));
-        SLInsert(crit_reg_and_vars, field2);
+        crit_reg_and_vars[curr_instr->field2] = 't';
       }
       // add field3 if not NULL
       if (curr_instr->field3) {
-        int *field3 = malloc(sizeof(int));
-        memcpy(field3, &curr_instr->field3, sizeof(int));
-        SLInsert(crit_reg_and_vars, field3);
+        crit_reg_and_vars[curr_instr->field3] = 't';
       }
     }
 
     curr_instr = curr_instr->prev;
   }
-
-  SLDestroy(crit_reg_and_vars);
 
   // delete all non-critical instructions
   curr_instr = head;
