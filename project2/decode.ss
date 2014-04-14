@@ -127,10 +127,10 @@
          )) (map add-count-words-in-p (map add-encoded-p encoders))))
     )))
 
-;(define add1 (encode-n 1))
-;(define plaintext document)
-;(define ciphertext (encode-d plaintext add1))
-;(define decoder (Gen-Decoder-A (car ciphertext)))
+(define add1 (encode-n 1))
+(define plaintext document)
+(define ciphertext (encode-d plaintext add1))
+(define decoder (Gen-Decoder-A (car ciphertext)))
 
 ;;generate a decoder using frequency analysis
 ;;INPUT:same as above
@@ -148,7 +148,7 @@
 ;;OUTPUT: a decoded document
 (define Code-Breaker
   (lambda (d decoder)
-    (map (lambda (p) (encode-p p decoder)) d)
+    (encode-d d decoder)
   ))
 
 ;; -----------------------------------------------------
