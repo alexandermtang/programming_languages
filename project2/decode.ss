@@ -43,9 +43,40 @@
 ;;OUTPUT: number of correctly spelled words in p
 (define count-words-in-p
   (lambda (p)
-    (reduce (lambda (b id) (if (eq? b #t) (+ 1 id) (+ 0 id)))
-            (map (lambda (w) (spell-checker w)) p)
-            0
+    (let ((isspelledright? (lambda (w) (if (spell-checker w) 1 0))))
+      (reduce + (map isspelledright? p) 0)
+    )))
+
+;;INPUT: a list "l" with any amount nesting
+;;OUTPUT: a flattened list with only 1 level
+(define flatten
+  (lambda (l)
+    (cond
+      ((null? l) '())
+      ((pair? l)
+        (append (flatten (car l)) (flatten (cdr l))))
+      (else (cons l '()))
+    )))
+
+;;INPUT: a paragraph "p" and letter "l"
+;;OUTPUT: number of occurrences of letter "l"
+(define count-letter-in-p
+  (lambda (p l)
+    (let ((isletter? (lambda (c) (if (eq? c l) 1 0))))
+      (reduce + (map isletter? (flatten p)) 0)
+    )))
+
+;;INPUT: a paragraph "p"
+;;OUTPUT: most frequently occurring letter in p
+(define get-most-freq-l-in-p
+  (lambda (p)
+    (let ((letters (map (lambda (v) (vtc v)) (range 0 25))))
+      (cdr ((lambda (struct)
+        (reduce
+          (lambda (x y) (if (> (car x) (car y)) x y))
+          (cdr struct)
+          (car struct)
+         )) (map (lambda (l) (cons (count-letter-in-p p l) l)) letters)))
     )))
 
 ;; -----------------------------------------------------
@@ -64,13 +95,13 @@
                           ((not (eq? (car w1) (car w2))) #f)
                           ((eq? (car w1) (car w2)) (wordeq? (cdr w1) (cdr w2)))
                         )))
-             (helper (lambda (w dict)
-                       (cond
-                         ((null? dict) #f)
-                         ((wordeq? w (car dict)) #t)
-                         (else (helper w (cdr dict)))
-                       ))))
-      (helper w dictionary)
+             (indictionary? (lambda (w dict)
+                              (cond
+                                ((null? dict) #f)
+                                ((wordeq? w (car dict)) #t)
+                                (else (indictionary? w (cdr dict)))
+                              ))))
+      (indictionary? w dictionary)
     )))
 
 ;following implementation is SLOW
@@ -92,8 +123,7 @@
 (define encode-n
   (lambda (n);;"n" is the distance, eg. n=3: a->d,b->e,...z->c
     (lambda (w);;"w" is the word to be encoded
-      (map
-        (lambda (c) (vtc (modulo (+ (ctv c) n) 26))) w)
+      (map (lambda (c) (vtc (modulo (+ (ctv c) n) 26))) w)
     )))
 
 ;;encode a document
@@ -127,18 +157,13 @@
          )) (map add-count-words-in-p (map add-encoded-p encoders))))
     )))
 
-(define add1 (encode-n 1))
-(define plaintext document)
-(define ciphertext (encode-d plaintext add1))
-(define decoder (Gen-Decoder-A (car ciphertext)))
-
 ;;generate a decoder using frequency analysis
 ;;INPUT:same as above
 ;;OUTPUT:same as above
 (define Gen-Decoder-B
   (lambda (p)
-    'SOME_CODE_GOES_HERE ;; *** FUNCTION BODY IS MISSING ***
-    ))
+    (encode-n (- (ctv 'e) (ctv (get-most-freq-l-in-p p))))
+  ))
 
 ;; -----------------------------------------------------
 ;; CODE-BREAKER FUNCTION
@@ -159,3 +184,11 @@
 ;;(define decoderSP1 (Gen-Decoder-A paragraph))
 ;;(define decoderFA1 (Gen-Decoder-B paragraph))
 ;;(Code-Breaker document decoderSP1)
+
+
+(define pg '((t h i s) (a) (p a r a g r a p h)))
+(define add1 (encode-n 1))
+(define plaintext document)
+(define ciphertext (encode-d plaintext add1))
+(define decoderA (Gen-Decoder-A (car ciphertext)))
+(define decoderB (Gen-Decoder-B (car ciphertext)))
