@@ -184,11 +184,3 @@
 ;;(define decoderSP1 (Gen-Decoder-A paragraph))
 ;;(define decoderFA1 (Gen-Decoder-B paragraph))
 ;;(Code-Breaker document decoderSP1)
-
-
-(define pg '((t h i s) (a) (p a r a g r a p h)))
-(define add1 (encode-n 1))
-(define plaintext document)
-(define ciphertext (encode-d plaintext add1))
-(define decoderA (Gen-Decoder-A (car ciphertext)))
-(define decoderB (Gen-Decoder-B (car ciphertext)))
