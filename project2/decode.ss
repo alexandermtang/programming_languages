@@ -8,14 +8,14 @@
 ;; -----------------------------------------------------
 ;; ENVIRONMENT
 ;; contains "ctv", "vtc",and "reduce" definitions
-(load "include.ss")
+;(load "include.ss")
 
 ;; contains a test document consisting of three paragraphs. 
-(load "document.ss")
+;(load "document.ss")
 
 ;; contains a test-dictionary, which has a much smaller dictionary for testing
 ;; the dictionary is needed for spell checking
-(load "test-dictionary.ss")
+;(load "test-dictionary.ss")
 
 ;; (load "dictionary.ss") ;; the real thing with 45,000 words
 
