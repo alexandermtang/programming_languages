@@ -63,8 +63,9 @@ void encode_decode(char *file_name, int n, int decode_choice) {
   fclose(file);
 
   // encode
-  for (i = 0; i < WORDS_PER_PARA; i++) {
+#pragma omp parallel for private(i, k)
     for (j = 0; j < PARAS_PER_DOC; j++) {
+  for (i = 0; i < WORDS_PER_PARA; i++) {
       for (k = 0; k < strlen (document[j][i]); k++) {
 	document[j][i][k] = encrypt(document[j][i][k], n);
       }
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
   int n = atoi(argv[2]);
 
   omp_set_num_threads(NUM_THREADS);
-  
+
   TIMER_T startTime;
   TIMER_READ(startTime);
 
