@@ -99,10 +99,12 @@ void encode_decode(char *file_name, int n, int decode_choice) {
   //printf("*****DECODED DOCUMENT*****\n");
   for (i = 0; i < PARAS_PER_DOC; i++) {
     for (j = 0; j < WORDS_PER_PARA; j++) {
+      if (j > 0) {
+	fprintf(file, " ");
+      }
       for (k = 0; k < strlen (document[i][j]); k++) {
 	fprintf(file, "%c", document[i][j][k]);
       }
-      fprintf(file, " ");
     }
     fprintf(file, "\n");
   }

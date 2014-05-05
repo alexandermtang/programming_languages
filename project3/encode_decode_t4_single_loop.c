@@ -65,14 +65,8 @@ void encode_decode(char *file_name, int n, int decode_choice) {
   // encode
   for (i = 0; i < WORDS_PER_PARA; i++) {
     for (j = 0; j < PARAS_PER_DOC; j++) {
-      omp_set_num_threads(NUM_THREADS);
-      #pragma omp parallel
-      {
-        int id, k;
-        id = omp_get_thread_num();
-        for (k = id; k < strlen (document[j][i]); k+=NUM_THREADS) {
-          document[j][i][k] = encrypt(document[j][i][k], n);
-        }
+      for (k = 0; k < strlen (document[j][i]); k++) {
+	document[j][i][k] = encrypt(document[j][i][k], n);
       }
     }
   }
@@ -88,14 +82,8 @@ void encode_decode(char *file_name, int n, int decode_choice) {
 
   for (i = 0; i < WORDS_PER_PARA; i++) {
     for (j = 0; j < PARAS_PER_DOC; j++) {
-      omp_set_num_threads(NUM_THREADS);
-      #pragma omp parallel
-      {
-        int id, k;
-        id = omp_get_thread_num();
-        for (k = id; k < strlen (document[j][i]); k+=NUM_THREADS) {
-          document[j][i][k] = encrypt(document[j][i][k], n_dash);
-        }
+      for (k = 0; k < strlen (document[j][i]); k++) {
+	document[j][i][k] = encrypt(document[j][i][k], n_dash);
       }
     }
   }
@@ -114,10 +102,12 @@ void encode_decode(char *file_name, int n, int decode_choice) {
   //printf("*****DECODED DOCUMENT*****\n");
   for (i = 0; i < PARAS_PER_DOC; i++) {
     for (j = 0; j < WORDS_PER_PARA; j++) {
+      if (j > 0) {
+	fprintf(file, " ");
+      }
       for (k = 0; k < strlen (document[i][j]); k++) {
 	fprintf(file, "%c", document[i][j][k]);
       }
-      fprintf(file, " ");
     }
     fprintf(file, "\n");
   }
@@ -135,6 +125,8 @@ int main(int argc, char **argv)
   char *file_name = argv[1];
   int n = atoi(argv[2]);
 
+  omp_set_num_threads(NUM_THREADS);
+  
   TIMER_T startTime;
   TIMER_READ(startTime);
 
