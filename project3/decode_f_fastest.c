@@ -18,9 +18,11 @@ int decode_f(char document[PARAS_PER_DOC][WORDS_PER_PARA][CHARS_PER_WORD]) {
 
   int c;
   // get most frequently occurring character in encoded document
-  for(c = 0; c < NUMBER_OF_CHARS; c++) {
+#pragma omp parallel for private(j)
     for (i = 0; i < PARAS_PER_DOC; i++) {
+#pragma omp parallel for private(c, k)
       for (j = 0; j < WORDS_PER_PARA; j++) {
+  for(c = 0; c < NUMBER_OF_CHARS; c++) {
 	for (k = 0; k < strlen (document[i][j]); k++) {
 	  if (c == ctv(document[i][j][k])) {
 	    char_freq[c]++;
